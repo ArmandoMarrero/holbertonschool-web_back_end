@@ -40,18 +40,31 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-        """ return a dictionary """
-        assert type(index) == int and type(page_size) == int
-        assert 0 <= index < len(self.indexed_dataset())
-        pages = []
-        next_index = index + page_size
-        for i in range(index, index + page_size):
-            if not self.indexed_dataset().get(i):
-                i += 1
+        """Return a dictionary of pagination data"""
+        pass
+
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """Return a dictionary of pagination data"""
+        assert isinstance(index, int) and index >= 0
+        assert isinstance(page_size, int) and page_size > 0
+
+        indexed_data = self.indexed_dataset()
+        dataset_size = len(indexed_data)
+        assert index < dataset_size
+
+        data = []
+        next_index = index
+        for _ in range(page_size):
+            while (next_index < dataset_size and
+                    indexed_data.get(next_index) is None):
                 next_index += 1
-            pages.append(self.indexed_dataset()[i])
-        return {'index': index,
-                'next_index': next_index,
-                'page_size': page_size,
-                'data': pages
-                }
+            if next_index < dataset_size:
+                data.append(indexed_data[next_index])
+            next_index += 1
+
+        return {
+            "index": index,
+            "next_index": next_index if next_index < dataset_size else None,
+            "page_size": page_size,
+            "data": data,
+        }
