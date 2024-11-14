@@ -18,7 +18,7 @@ from typing import (
 
 class TestAccessNestedMap(unittest.TestCase):
     """
-    Tests 'utils.access_nested_map'
+    Tests that 'utils.access_nested_map' works correctly.
     """
     @parameterized.expand(
         [
@@ -34,7 +34,12 @@ class TestAccessNestedMap(unittest.TestCase):
         expected: Any
     ) -> None:
         """
-        Tests utils.access_nested_map
+        Tests that 'utils.access_nested_map' returns
+        what it's supposed to.
+
+        It is supposed to return the value at the end
+        of the path through each nested mapping,
+        like a file path:
 
         >>> utils.access_nested_map({"a": 1}, ("a",))
         1
@@ -58,7 +63,10 @@ class TestAccessNestedMap(unittest.TestCase):
         path: Sequence
     ) -> None:
         """
-        test access nested map exception
+        Tests that inputting a path that's too long or wrong
+        for the nested mapping results in 'utils.access_nested_map'
+        to raise a KeyError with the first wrong key in 'path'
+        as the error message.
 
         >>> utils.access_nested_map({}, ("a",))
         KeyError
@@ -81,7 +89,11 @@ class TestGetJson(unittest.TestCase):
     )
     def test_get_json(self, test_url: str, test_payload) -> None:
         """
-        tests get json
+        Tests that <utils.get_json>
+        returns <test_payload> for <test_url>,
+        while mocking <utils.requests.get> to return
+        a mocked <utils.requests.Request> object that has the <json> method
+        mocked to return <test_payload>.
         """
         with unittest.mock.patch(
             'utils.requests.get',
@@ -98,12 +110,15 @@ class TestGetJson(unittest.TestCase):
 
 class TestMemoize(unittest.TestCase):
     """
-    Tests 'utils.memoize'
+    Tests the 'utils.memoize' decorator.
     """
-
     def test_memoize(self):
         """
-        Tests utils.memoize
+        Tests that using 'utils.memoize' as a decorator
+        on a method
+
+        first runs the method normally, then returns
+        the cached result of the method every other time.
 
         >>> class TestClass:
             def a_method(self):
@@ -119,6 +134,10 @@ class TestMemoize(unittest.TestCase):
         42
         >>> t.a_property
         42
+
+        This method mocks <TestClass.a_method> to just return 42,
+        and tests that the mocked <TestClass.a_method> only gets run once,
+        to verify that <TestClass.a_property> is properly chached.
         """
         EXPECTED_OUTPUT = 42
 
